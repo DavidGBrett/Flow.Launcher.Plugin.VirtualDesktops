@@ -26,9 +26,6 @@ class VirtualDesktopSwitcher(FlowLauncher):
             is_current:bool = vd.id == current_vd.id
 
             if is_current: continue
-
-            if filter not in vd.name.lower():
-                continue
             
             name = ""
             try:
@@ -37,6 +34,9 @@ class VirtualDesktopSwitcher(FlowLauncher):
 
             if name == "":
                 name = f"Desktop {vd.number}"
+
+            if filter not in name.lower():
+                continue
 
             results.append({
                 "Title": name,
