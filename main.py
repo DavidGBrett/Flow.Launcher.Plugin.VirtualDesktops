@@ -45,7 +45,7 @@ class VirtualDesktopSwitcher(FlowLauncher):
             results.append({
                 "Title": name,
                 "SubTitle": "",
-                "Score": score
+                "Score": score,
                 "IcoPath": "assets/main_icon.png",
                 "JsonRPCAction": {
                     "method": "switch_to_desktop",
