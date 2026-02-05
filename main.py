@@ -12,6 +12,8 @@ from pyvda import VirtualDesktop, get_virtual_desktops
 
 class VirtualDesktopSwitcher(FlowLauncher):
 
+    prev_vd_number:int = -1
+
     def query(self,  param: str = ''):
 
         results = []
@@ -44,6 +46,11 @@ class VirtualDesktopSwitcher(FlowLauncher):
 
                 subtitle = "Current Desktop"
             
+            elif self.prev_vd_number == vd.number:
+                # If this is the previous vd, prioritize it in the results
+                score = 50
+
+                subtitle = "Previous Desktop"
 
             results.append({
                 "Title": name,
@@ -59,6 +66,8 @@ class VirtualDesktopSwitcher(FlowLauncher):
         return results
 
     def switch_to_desktop(self, number:int):
+        self.prev_vd_number = number
+
         VirtualDesktop(number).go()
 
 if __name__ == "__main__":
