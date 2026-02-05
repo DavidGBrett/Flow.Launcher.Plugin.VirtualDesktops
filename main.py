@@ -35,16 +35,19 @@ class VirtualDesktopSwitcher(FlowLauncher):
                 continue
 
             score = 0
+            subtitle = ""
 
             is_current:bool = vd.id == current_vd.id
             if is_current:
                 # If this is the current vd, make sure its last using a low score
                 score = -100
+
+                subtitle = "Current Desktop"
             
 
             results.append({
                 "Title": name,
-                "SubTitle": "",
+                "SubTitle": subtitle,
                 "Score": score,
                 "IcoPath": "assets/main_icon.png",
                 "JsonRPCAction": {
