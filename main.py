@@ -23,7 +23,7 @@ class VirtualDesktopSwitcher(FlowLauncher):
         filter = param.strip().lower()
         
         for vd in virtual_desktops:
-            is_current:bool = vd == current_vd
+            is_current:bool = vd.id == current_vd.id
 
             if is_current: continue
 
