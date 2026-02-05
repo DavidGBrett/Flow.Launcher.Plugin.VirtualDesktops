@@ -23,10 +23,6 @@ class VirtualDesktopSwitcher(FlowLauncher):
         filter = param.strip().lower()
         
         for vd in virtual_desktops:
-            is_current:bool = vd.id == current_vd.id
-
-            if is_current: continue
-            
             name = ""
             try:
                 name = vd.name
@@ -38,9 +34,18 @@ class VirtualDesktopSwitcher(FlowLauncher):
             if filter not in name.lower():
                 continue
 
+            score = 0
+
+            is_current:bool = vd.id == current_vd.id
+            if is_current:
+                # If this is the current vd, make sure its last using a low score
+                score = -100
+            
+
             results.append({
                 "Title": name,
                 "SubTitle": "",
+                "Score": score
                 "IcoPath": "assets/main_icon.png",
                 "JsonRPCAction": {
                     "method": "switch_to_desktop",
