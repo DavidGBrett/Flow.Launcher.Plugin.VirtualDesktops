@@ -29,9 +29,17 @@ class VirtualDesktopSwitcher(FlowLauncher):
 
             if filter not in vd.name.lower():
                 continue
+            
+            name = ""
+            try:
+                name = vd.name
+            except  NotImplementedError as e: pass
+
+            if name == "":
+                name = f"Desktop {vd.number}"
 
             results.append({
-                "Title": vd.name,
+                "Title": name,
                 "SubTitle": "",
                 "IcoPath": "assets/main_icon.png",
                 "JsonRPCAction": {
