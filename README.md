@@ -1,0 +1,1 @@
+A plugin to allow easy switching of Virtual Desktops with Flow-Launcher

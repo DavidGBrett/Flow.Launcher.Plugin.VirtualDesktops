@@ -1,0 +1,12 @@
+{
+    "ID": "ae951fdb-f40b-4b45-b66c-14acd12f0f7c",
+    "ActionKeyword": "d",
+    "Name": "Virtual Desktop Switcher",
+    "Description": "A plugin to allow easy switching of Virtual Desktops with Flow-Launcher",
+    "Author": "DavidGBrett",
+    "Version": "1.0.0",
+    "Language": "python",
+    "Website": "https://github.com/DavidGBrett/Flow.Launcher.Plugin.VirtualDesktopSwitcher",
+    "IcoPath": "assets\\main_icon.png",
+    "ExecuteFileName": "main.py"
+}
