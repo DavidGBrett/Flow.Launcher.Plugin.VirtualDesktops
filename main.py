@@ -39,8 +39,7 @@ class VirtualDesktopSwitcher(FlowLauncher):
             score = 0
             subtitle = ""
 
-            is_current:bool = vd.id == current_vd.id
-            if is_current:
+            if vd.id == current_vd.id:
                 # If this is the current vd, make sure its last using a low score
                 score = -100
 
