@@ -7,9 +7,10 @@ import sys
 import fnmatch
     
 def get_ignore_func():
-    script_dir = Path(__file__).parent.resolve()
+    # Assumes this script is in the root directory
+    root_dir = Path(__file__).parent.resolve()
 
-    build_ignore_path = script_dir / "build_ignore.json"
+    build_ignore_path = root_dir / "build_ignore.json"
 
     with open(build_ignore_path) as build_ignore_file:
         build_ignore = json.load(build_ignore_file)
@@ -20,7 +21,7 @@ def get_ignore_func():
         ignored_names = set()
 
         # if we are at the root level
-        if script_dir.match(path):
+        if root_dir.match(path):
             #ignore file/dir if its name matches any pattern in root_level_ignores
             for name in names:
                 for pattern in root_level_ignores:
@@ -41,15 +42,16 @@ def get_ignore_func():
 
 def build():
 
-    script_dir = Path(__file__).parent.resolve()
+    # Assumes this script is in the root directory
+    root_dir = Path(__file__).parent.resolve()
 
-    build_dir = script_dir / "build"
+    build_dir = root_dir / "build"
 
     lib_dir = build_dir / "lib"
 
     requirements_path = build_dir / "requirements.txt"
 
-    dist_dir = script_dir / "dist"
+    dist_dir = root_dir / "dist"
 
     zip_path = dist_dir / "VirtualDesktopSwitcher"
 
@@ -63,7 +65,7 @@ def build():
 
     # copy to the build dir
     shutil.copytree(
-        script_dir, 
+        root_dir, 
         build_dir, 
         dirs_exist_ok=True,
         ignore=get_ignore_func()
