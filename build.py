@@ -107,11 +107,14 @@ def build(dist_dir_name,output_file_name):
     shutil.make_archive(zip_path.as_posix(), 'zip', build_dir)
 
 if __name__ == "__main__":
+    # by default use parent dir name for output filename
+    default_output_filename = Path(__file__).parent.name
+
     parser = argparse.ArgumentParser(description='Build script')
 
     parser.add_argument('--output-dir', '-d', type=str, default='dist', 
                        help='Output directory name (relative to root)')
-    parser.add_argument('--filename', '-f', type=str, default='build',
+    parser.add_argument('--filename', '-f', type=str, default=default_output_filename,
                        help='Output filename (without extension)')
 
     args = parser.parse_args()
