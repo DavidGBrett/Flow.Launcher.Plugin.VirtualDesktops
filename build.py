@@ -95,10 +95,14 @@ def build():
             print("Trying with module:",e2.stderr)
             sys.exit(1)
 
-    
-    # zip build and put in dist
+    # remove dist dir if it already exists
+    if dist_dir.exists():
+        shutil.rmtree(dist_dir)
+
+    # create dist dir
     dist_dir.mkdir(parents=True, exist_ok=True)
 
+    # zip build and put in dist
     shutil.make_archive(zip_path.as_posix(), 'zip', build_dir)
 
 if __name__ == "__main__":
