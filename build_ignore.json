@@ -10,6 +10,6 @@
         "build_ignore.json"
     ],
     "any_level":[
-
+        "__pycache__"
     ]
 }
