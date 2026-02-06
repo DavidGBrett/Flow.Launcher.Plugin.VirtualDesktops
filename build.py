@@ -1,3 +1,4 @@
+import argparse
 import json
 import shutil
 import os
@@ -40,7 +41,7 @@ def get_ignore_func():
         
 
 
-def build():
+def build(dist_dir_name,output_file_name):
 
     # Assumes this script is in the root directory
     root_dir = Path(__file__).parent.resolve()
@@ -51,9 +52,9 @@ def build():
 
     requirements_path = build_dir / "requirements.txt"
 
-    dist_dir = root_dir / "dist"
+    dist_dir = root_dir / dist_dir_name
 
-    zip_path = dist_dir / "VirtualDesktopSwitcher"
+    zip_path = dist_dir / output_file_name
 
 
     # remove build dir if it already exists
@@ -106,4 +107,16 @@ def build():
     shutil.make_archive(zip_path.as_posix(), 'zip', build_dir)
 
 if __name__ == "__main__":
-    build()
+    parser = argparse.ArgumentParser(description='Build script')
+
+    parser.add_argument('--output-dir', '-d', type=str, default='dist', 
+                       help='Output directory name (relative to root)')
+    parser.add_argument('--filename', '-f', type=str, default='build',
+                       help='Output filename (without extension)')
+
+    args = parser.parse_args()
+    
+    build(
+        dist_dir_name=args.output_dir,
+        output_file_name=args.filename
+    )
