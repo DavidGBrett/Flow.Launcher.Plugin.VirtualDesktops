@@ -1,9 +1,43 @@
+import json
 import shutil
 import os
 from pathlib import Path
 import subprocess
 import sys
+import fnmatch
     
+def get_ignore_func():
+    script_dir = Path(__file__).parent.resolve()
+
+    build_ignore_path = script_dir / "build_ignore.json"
+
+    with open(build_ignore_path) as build_ignore_file:
+        build_ignore = json.load(build_ignore_file)
+        root_level_ignores:list[str] = build_ignore["root_level"]
+        any_level_ignores:list[str]  = build_ignore["any_level"]
+
+    def ignore_func(path:str,names:list[str]) -> set[str]:
+        ignored_names = set()
+
+        # if we are at the root level
+        if script_dir.match(path):
+            #ignore file/dir if its name matches any pattern in root_level_ignores
+            for name in names:
+                for pattern in root_level_ignores:
+                    if fnmatch.fnmatch(name, pattern):
+                        ignored_names.add(name)
+
+        # ignore file/dir if its name matches any pattern in any_level_ignores
+        for name in names:
+            for pattern in any_level_ignores:
+                if fnmatch.fnmatch(name, pattern):
+                    ignored_names.add(name)
+
+        
+        return ignored_names
+    return ignore_func
+        
+
 
 def build():
 
@@ -32,7 +66,7 @@ def build():
         script_dir, 
         build_dir, 
         dirs_exist_ok=True,
-        ignore=lambda path,names:('.git', ".venv", "build", "build.py", ".github", "dist")
+        ignore=get_ignore_func()
     )
 
     # install dependencies
