@@ -1,0 +1,17 @@
+{
+    "root_level":[
+        ".git",
+        ".venv",
+        ".github",
+        "dist",
+        "build",
+        "build.py",
+        ".gitignore",
+        "build_ignore.json"
+    ],
+    "any_level":[
+        "__pycache__",
+        "*.pyc",
+        "*.pyo"
+    ]
+}
