@@ -23,13 +23,7 @@ class VirtualDesktopSwitcher(FlowLauncher):
         filter = param.strip().lower()
         
         for vd in virtual_desktops:
-            name = ""
-            try:
-                name = vd.name
-            except  NotImplementedError as e: pass
-
-            if name == "":
-                name = f"Desktop {vd.number}"
+            name = self.get_desktop_name(vd)
 
             if filter not in name.lower():
                 continue
@@ -56,6 +50,17 @@ class VirtualDesktopSwitcher(FlowLauncher):
             })
 
         return results
+    
+    def get_desktop_name(self, vd:VirtualDesktop):
+        name = ""
+        try:
+            name = vd.name
+        except  NotImplementedError as e: pass
+
+        if name == "":
+            name = f"Desktop {vd.number}"
+        
+        return name
 
     def switch_to_desktop(self, number:int):
 
