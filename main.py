@@ -43,11 +43,30 @@ class VirtualDesktopSwitcher(FlowLauncher):
                 "SubTitle": subtitle,
                 "Score": score,
                 "IcoPath": "assets/main_icon.png",
+                "ContextData":vd.number,
                 "JsonRPCAction": {
                     "method": "switch_to_desktop",
                     "parameters": [vd.number]
                 }
             })
+
+        return results
+    
+    def context_menu(self, data):
+        results = []
+
+        match data:
+            case int() as vd_number:
+                                
+                results.append({
+                    "Title": "Delete",
+                    "SubTitle": f"Delete this virtual desktop",
+                    "JsonRPCAction": {
+                        "method": "delete_desktop",
+                        "parameters": [vd_number]
+                    }
+                })
+
 
         return results
     
@@ -65,6 +84,9 @@ class VirtualDesktopSwitcher(FlowLauncher):
     def switch_to_desktop(self, number:int):
 
         VirtualDesktop(number).go()
+
+    def delete_desktop(self, number:int):
+        VirtualDesktop(number=number).remove()
 
 if __name__ == "__main__":
     VirtualDesktopSwitcher()
