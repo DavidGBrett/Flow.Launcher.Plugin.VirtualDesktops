@@ -7,7 +7,7 @@ A plugin that lets you switch between Windows Virtual Desktops using [Flow launc
 
 
 ## Usage
-1. Type ``d`` to list your virtual desktops
+1. Type ``vd`` to list your virtual desktops
 2. Select one to switch to it
 
 ## Installation
