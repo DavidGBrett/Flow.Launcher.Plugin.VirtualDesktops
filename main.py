@@ -10,7 +10,7 @@ from flowlauncher import FlowLauncher
 
 from pyvda import VirtualDesktop, get_virtual_desktops
 
-class VirtualDesktopSwitcher(FlowLauncher):
+class VirtualDesktops(FlowLauncher):
 
     def query(self,  param: str = ''):
 
@@ -67,4 +67,4 @@ class VirtualDesktopSwitcher(FlowLauncher):
         VirtualDesktop(number).go()
 
 if __name__ == "__main__":
-    VirtualDesktopSwitcher()
+    VirtualDesktops()

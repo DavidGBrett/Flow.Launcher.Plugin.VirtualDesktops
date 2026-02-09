@@ -2,7 +2,7 @@
     <img src="assets\main_icon.png" alt="Plugin Icon" height="120">
 </p>
 
-# Virtual Desktop Switcher for Flow Launcher
+# Virtual Desktops for Flow Launcher
 A plugin that lets you switch between Windows Virtual Desktops using [Flow launcher](https://github.com/Flow-Launcher/Flow.Launcher).
 
 
@@ -14,11 +14,11 @@ A plugin that lets you switch between Windows Virtual Desktops using [Flow launc
 
 ### Plugin Manager
 1. Open Flow Launcher
-2. Search for ``pm install Virtual Desktop Switcher by DavidGBrett`` 
+2. Search for ``pm install Virtual Desktops by DavidGBrett`` 
 3. Press enter to install the plugin
 
 ### Manual Installation from Release
-1. Download the latest release from the [Releases page](https://github.com/DavidGBrett/Flow.Launcher.Plugin.VirtualDesktopSwitcher/releases)
+1. Download the latest release from the [Releases page](https://github.com/DavidGBrett/Flow.Launcher.Plugin.VirtualDesktops/releases)
 2. Extract the downloaded archive to your Flow Launcher plugins directory:
    `%APPDATA%\FlowLauncher\Plugins`
 3. Restart Flow Launcher
