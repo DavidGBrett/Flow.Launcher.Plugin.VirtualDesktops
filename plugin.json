@@ -2,7 +2,7 @@
     "ID": "ae951fdb-f40b-4b45-b66c-14acd12f0f7c",
     "ActionKeyword": "d",
     "Name": "Virtual Desktops",
-    "Description": "A plugin to allow easy switching of Virtual Desktops with Flow-Launcher",
+    "Description": "Switch between Virtual Desktops using Flow Launcher",
     "Author": "DavidGBrett",
     "Version": "1.0.0",
     "Language": "python",
