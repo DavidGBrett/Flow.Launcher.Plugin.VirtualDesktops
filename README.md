@@ -30,3 +30,6 @@ A plugin that lets you switch between Windows Virtual Desktops using [Flow launc
 4. Extract the generated archive from the `dist` folder to your Flow Launcher plugins directory:
    `%APPDATA%\FlowLauncher\Plugins`
 5. Restart Flow Launcher
+
+## License
+MIT - See LICENSE file for details.
