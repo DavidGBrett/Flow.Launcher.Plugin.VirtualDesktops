@@ -3,6 +3,12 @@
 </p>
 
 # Virtual Desktops for Flow Launcher
+
+<p align="center">
+<a href="https://github.com/DavidGBrett/Flow.Launcher.Plugin.VirtualDesktops/releases"><img src="https://img.shields.io/github/downloads/DavidGBrett/Flow.Launcher.Plugin.VirtualDesktops/total.svg"></a>
+<a href="https://github.com/DavidGBrett/Flow.Launcher.Plugin.VirtualDesktops/releases/latest"><img src="https://img.shields.io/github/v/release/DavidGBrett/Flow.Launcher.Plugin.VirtualDesktops"></a>
+</p>
+
 A plugin that lets you switch between Windows Virtual Desktops using [Flow launcher](https://github.com/Flow-Launcher/Flow.Launcher).
 
 
