@@ -7,16 +7,28 @@ sys.path.append(parent_folder_path)
 sys.path.append(os.path.join(parent_folder_path, 'lib'))
 sys.path.append(os.path.join(parent_folder_path, 'plugin'))
 
-from flogin import Plugin, Query, Result
+from flogin import ExecuteResponse, Plugin, Query, Result
 
 from pyvda import VirtualDesktop, get_virtual_desktops
 
 plugin = Plugin()
 
+class DesktopResult(Result):
+    def __init__(self, desktop:VirtualDesktop, title: str, subtitle:str) -> None:
+        super().__init__(title, sub=subtitle, icon="assets/main_icon.png")
+
+        self.desktop = desktop
+
+    async def callback(self):
+        # switch to given virtual desktop
+        self.desktop.go()
+
+        return ExecuteResponse(True)
+
 @plugin.search()
 async def query(query:Query):
 
-    results:list[Result] = []
+    results:list[DesktopResult] = []
 
     virtual_desktops = get_virtual_desktops()
 
@@ -37,16 +49,11 @@ async def query(query:Query):
             score = -100
 
             subtitle = "Current Desktop"
-    
 
-        results.append(Result.create_with_partial(
+        results.append(DesktopResult(
+            desktop=vd,
             title=name,
-            sub=subtitle,
-            icon="assets/main_icon.png",
-            partial_callback=functools.partial(
-                switch_to_desktop,
-                vd.number
-            )
+            subtitle=subtitle,
         ))
 
     return results
@@ -61,8 +68,5 @@ def get_desktop_name(vd:VirtualDesktop):
         name = f"Desktop {vd.number}"
     
     return name
-
-async def switch_to_desktop(number:int):
-    VirtualDesktop(number).go()
 
 plugin.run()
