@@ -7,7 +7,7 @@ sys.path.append(parent_folder_path)
 sys.path.append(os.path.join(parent_folder_path, 'lib'))
 sys.path.append(os.path.join(parent_folder_path, 'plugin'))
 
-from flogin import ExecuteResponse, Plugin, Query, Result
+from flogin import ExecuteResponse, Glyph, Plugin, Query, Result
 
 from pyvda import VirtualDesktop, get_virtual_desktops
 
@@ -32,6 +32,20 @@ class DesktopResult(Result):
         await plugin.api.change_query(plugin.metadata.main_keyword+" ",requery=True)
 
         return ExecuteResponse(True)
+    
+    async def context_menu(self):
+        context_options = []
+
+        context_options.append(Result.create_with_partial(
+            title="Delete",
+            glyph=Glyph(text="Ｘ",font_family="sans-serif"),
+            partial_callback=functools.partial(
+                lambda vd: vd.remove(),
+                self.desktop
+            )
+        ))
+
+        return context_options
 
 @plugin.search()
 async def query(query:Query):
