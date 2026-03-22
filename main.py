@@ -14,13 +14,13 @@ from pyvda import VirtualDesktop, get_virtual_desktops
 plugin = Plugin()
 
 class DesktopResult(Result):
-    def __init__(self, desktop_number:int, title: str, subtitle:str) -> None:
+    def __init__(self, desktop:VirtualDesktop, title: str, subtitle:str) -> None:
         super().__init__(title, sub=subtitle, icon="assets/main_icon.png")
 
-        self.desktop_number = desktop_number
+        self.desktop = desktop
 
     async def callback(self):
-        switch_to_desktop(self.desktop_number)
+        switch_to_desktop(self.desktop)
 
         return ExecuteResponse(True)
 
@@ -48,10 +48,9 @@ async def query(query:Query):
             score = -100
 
             subtitle = "Current Desktop"
-    
 
         results.append(DesktopResult(
-            desktop_number=vd.number,
+            desktop=vd,
             title=name,
             subtitle=subtitle,
         ))
@@ -69,7 +68,7 @@ def get_desktop_name(vd:VirtualDesktop):
     
     return name
 
-def switch_to_desktop(number:int):
-    VirtualDesktop(number).go()
+def switch_to_desktop(vd:VirtualDesktop):
+    vd.go()
 
 plugin.run()
