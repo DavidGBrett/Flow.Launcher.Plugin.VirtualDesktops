@@ -20,7 +20,8 @@ class DesktopResult(Result):
         self.desktop = desktop
 
     async def callback(self):
-        switch_to_desktop(self.desktop)
+        # switch to given virtual desktop
+        self.desktop.go()
 
         return ExecuteResponse(True)
 
@@ -67,8 +68,5 @@ def get_desktop_name(vd:VirtualDesktop):
         name = f"Desktop {vd.number}"
     
     return name
-
-def switch_to_desktop(vd:VirtualDesktop):
-    vd.go()
 
 plugin.run()
