@@ -1,70 +1,68 @@
 # -*- coding: utf-8 -*-
 
+import functools
 import sys,os
 parent_folder_path = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(parent_folder_path)
 sys.path.append(os.path.join(parent_folder_path, 'lib'))
 sys.path.append(os.path.join(parent_folder_path, 'plugin'))
 
-from flowlauncher import FlowLauncher
+from flogin import Plugin, Query, Result
 
 from pyvda import VirtualDesktop, get_virtual_desktops
 
-class VirtualDesktops(FlowLauncher):
+plugin = Plugin()
 
-    def query(self,  param: str = ''):
+@plugin.search()
+async def query(query:Query):
 
-        results = []
+    results:list[Result] = []
 
-        virtual_desktops = get_virtual_desktops()
+    virtual_desktops = get_virtual_desktops()
 
-        current_vd = VirtualDesktop(current=True)
-
-        filter = param.strip().lower()
-        
-        for vd in virtual_desktops:
-            name = self.get_desktop_name(vd)
-
-            if filter not in name.lower():
-                continue
-
-            score = 0
-            subtitle = ""
-
-            if vd.id == current_vd.id:
-                # If this is the current vd, make sure its last using a low score
-                score = -100
-
-                subtitle = "Current Desktop"
-        
-
-            results.append({
-                "Title": name,
-                "SubTitle": subtitle,
-                "Score": score,
-                "IcoPath": "assets/main_icon.png",
-                "JsonRPCAction": {
-                    "method": "switch_to_desktop",
-                    "parameters": [vd.number]
-                }
-            })
-
-        return results
+    current_vd = VirtualDesktop(current=True)
+    filter = query.text.strip().lower()
     
-    def get_desktop_name(self, vd:VirtualDesktop):
-        name = ""
-        try:
-            name = vd.name
-        except  NotImplementedError as e: pass
+    for vd in virtual_desktops:
+        name = get_desktop_name(vd)
 
-        if name == "":
-            name = f"Desktop {vd.number}"
-        
-        return name
+        if filter not in name.lower():
+            continue
 
-    def switch_to_desktop(self, number:int):
+        score = 0
+        subtitle = ""
 
-        VirtualDesktop(number).go()
+        if vd.id == current_vd.id:
+            # If this is the current vd, make sure its last using a low score
+            score = -100
 
-if __name__ == "__main__":
-    VirtualDesktops()
+            subtitle = "Current Desktop"
+    
+
+        results.append(Result.create_with_partial(
+            title=name,
+            sub=subtitle,
+            icon="assets/main_icon.png",
+            partial_callback=functools.partial(
+                switch_to_desktop,
+                vd.number
+            )
+        ))
+
+    return results
+    
+def get_desktop_name(vd:VirtualDesktop):
+    name = ""
+    try:
+        name = vd.name
+    except  NotImplementedError as e: pass
+
+    if name == "":
+        name = f"Desktop {vd.number}"
+    
+    return name
+
+async def switch_to_desktop(number:int):
+    VirtualDesktop(number).go()
+
+plugin.run()
