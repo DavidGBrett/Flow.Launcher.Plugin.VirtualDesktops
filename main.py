@@ -71,12 +71,19 @@ class ChangeQueryResult(Result):
 
 @plugin.search()
 async def query(query:Query):
+    if query.text.startswith("add-"):
+        return await get_add_results(query=query)
+    else:
+        return get_all_desktops_results(query=query)
 
-    results:list[DesktopResult] = []
+
+def get_all_desktops_results(query:Query):
+    results:list[Result] = []
 
     virtual_desktops = get_virtual_desktops()
 
     current_vd = VirtualDesktop(current=True)
+
     filter = query.text.strip().lower()
     
     for vd in virtual_desktops:
@@ -112,8 +119,31 @@ async def query(query:Query):
             score=score
         ))
 
+    results.append(ChangeQueryResult(
+        new_query=f"{query.keyword} add-{query.text}",
+        plugin=plugin,
+        title="Add",
+        glyph=Glyph(text="＋",font_family="sans-serif"),
+        score=-100,
+    ))
+
     return results
-    
+
+async def get_add_results(query:Query):
+
+    name = query.text.removeprefix("add-")
+
+    class CreateDesktopResult(ChangeQueryResult):
+        def before_change_query(self):
+            VirtualDesktop.create().rename(name=name)
+
+    return CreateDesktopResult(
+        title=f"Add:{name}",
+        plugin=plugin,
+        new_query=f"{query.keyword} ",
+        glyph=Glyph(text="＋",font_family="sans-serif"),
+    )
+
 def get_desktop_name(vd:VirtualDesktop):
     name = ""
     try:
