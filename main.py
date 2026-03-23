@@ -23,6 +23,8 @@ class DesktopResult(Result):
         # switch to given virtual desktop
         self.desktop.go()
 
+        await plugin.api.change_query(plugin.metadata.main_keyword+" ",requery=True)
+
         return ExecuteResponse(True)
 
 @plugin.search()
