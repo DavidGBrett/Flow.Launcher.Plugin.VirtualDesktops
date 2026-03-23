@@ -14,8 +14,8 @@ from pyvda import VirtualDesktop, get_virtual_desktops
 plugin = Plugin()
 
 class DesktopResult(Result):
-    def __init__(self, desktop:VirtualDesktop, title: str, subtitle:str) -> None:
-        super().__init__(title, sub=subtitle, icon="assets/main_icon.png")
+    def __init__(self, desktop:VirtualDesktop, title: str, subtitle:str, score:int|None) -> None:
+        super().__init__(title, sub=subtitle, icon="assets/main_icon.png",score=score)
 
         self.desktop = desktop
 
@@ -54,6 +54,7 @@ async def query(query:Query):
             desktop=vd,
             title=name,
             subtitle=subtitle,
+            score=score
         ))
 
     return results
