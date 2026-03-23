@@ -11,6 +11,8 @@ from flogin import ExecuteResponse, Glyph, Plugin, Query, Result
 
 from pyvda import VirtualDesktop, get_virtual_desktops
 
+import asyncio
+
 plugin = Plugin()
 
 previous_desktop_id = None
@@ -46,6 +48,26 @@ class DesktopResult(Result):
         ))
 
         return context_options
+
+class ChangeQueryResult(Result):
+    def __init__(self, new_query:str, plugin:Plugin, title: str, subtitle:str | None = None, icon: str | None = None, glyph: Glyph | None = None,score:int | None = None) -> None:
+        super().__init__(title=title, sub=subtitle, icon=icon, glyph=glyph, score=score)
+        self._new_query = new_query
+        self._plugin = plugin
+
+    def before_change_query(self):
+        pass
+
+    async def callback(self):
+        self.before_change_query()
+
+        asyncio.create_task(
+            self._plugin.api.change_query(
+                new_query=self._new_query,
+                requery=True
+            )
+        )    
+        return ExecuteResponse(False)
 
 @plugin.search()
 async def query(query:Query):
