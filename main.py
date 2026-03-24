@@ -124,7 +124,7 @@ def get_all_desktops_results(query:Query):
         plugin=plugin,
         title="Add",
         glyph=Glyph(text="＋",font_family="sans-serif"),
-        score=-100,
+        score=-10000,
     ))
 
     return results
