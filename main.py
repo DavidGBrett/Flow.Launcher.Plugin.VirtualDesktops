@@ -62,8 +62,11 @@ async def query(query:Query):
             score = 1000 # trying to show it as high as possible
             subtitle = "Previous Desktop"
         
-        # prioritize desktops that have the filter as a prefix, ie exact match as you type
-        if name.lower().startswith(filter):
+        # prioritize desktops of which any word in its name has the filter as a prefix, ie exact match as you type
+        if any(map(
+            lambda w: w.startswith(filter), 
+            name.lower().split(" ")
+        )):
             score += 500
 
         results.append(DesktopResult(
