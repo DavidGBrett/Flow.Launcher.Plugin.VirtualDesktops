@@ -13,6 +13,8 @@ from pyvda import VirtualDesktop, get_virtual_desktops
 
 plugin = Plugin()
 
+previous_desktop_id = None
+
 class DesktopResult(Result):
     def __init__(self, desktop:VirtualDesktop, title: str, subtitle:str, score:int|None) -> None:
         super().__init__(title, sub=subtitle, icon="assets/main_icon.png",score=score)
@@ -20,8 +22,14 @@ class DesktopResult(Result):
         self.desktop = desktop
 
     async def callback(self):
+        # update previous desktop id
+        global previous_desktop_id
+        previous_desktop_id = VirtualDesktop.current().id
+        
         # switch to given virtual desktop
         self.desktop.go()
+
+        await plugin.api.change_query(plugin.metadata.main_keyword+" ",requery=True)
 
         return ExecuteResponse(True)
 
@@ -44,11 +52,22 @@ async def query(query:Query):
         score = 0
         subtitle = ""
 
+        # Show the current desktop last since you are unlikely to want to change to it
         if vd.id == current_vd.id:
-            # If this is the current vd, make sure its last using a low score
-            score = -100
-
+            score = -1000 # show lower in the list with low score
             subtitle = "Current Desktop"
+
+        # show previous desktop first, so you can easily switch back
+        elif vd.id == previous_desktop_id:
+            score = 1000 # trying to show it as high as possible
+            subtitle = "Previous Desktop"
+        
+        # prioritize desktops of which any word in its name has the filter as a prefix, ie exact match as you type
+        if any(map(
+            lambda w: w.startswith(filter), 
+            name.lower().split(" ")
+        )):
+            score += 500
 
         results.append(DesktopResult(
             desktop=vd,
