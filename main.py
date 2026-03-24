@@ -61,6 +61,10 @@ async def query(query:Query):
         elif vd.id == previous_desktop_id:
             score = 1000 # trying to show it as high as possible
             subtitle = "Previous Desktop"
+        
+        # prioritize desktops that have the filter as a prefix, ie exact match as you type
+        if name.lower().startswith(filter):
+            score += 500
 
         results.append(DesktopResult(
             desktop=vd,
