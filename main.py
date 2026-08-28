@@ -7,9 +7,11 @@ sys.path.append(parent_folder_path)
 sys.path.append(os.path.join(parent_folder_path, 'lib'))
 sys.path.append(os.path.join(parent_folder_path, 'plugin'))
 
-from flogin import ExecuteResponse, Plugin, Query, Result
+from flogin import ExecuteResponse, Glyph, Plugin, Query, Result
 
 from pyvda import VirtualDesktop, get_virtual_desktops
+
+import asyncio
 
 plugin = Plugin()
 
@@ -32,15 +34,56 @@ class DesktopResult(Result):
         await plugin.api.change_query(plugin.metadata.main_keyword+" ",requery=True)
 
         return ExecuteResponse(True)
+    
+    async def context_menu(self):
+        context_options = []
+
+        context_options.append(Result.create_with_partial(
+            title="Delete",
+            glyph=Glyph(text="Ｘ",font_family="sans-serif"),
+            partial_callback=functools.partial(
+                lambda vd: vd.remove(),
+                self.desktop
+            )
+        ))
+
+        return context_options
+
+class ChangeQueryResult(Result):
+    def __init__(self, new_query:str, plugin:Plugin, title: str, subtitle:str | None = None, icon: str | None = None, glyph: Glyph | None = None,score:int | None = None) -> None:
+        super().__init__(title=title, sub=subtitle, icon=icon, glyph=glyph, score=score)
+        self._new_query = new_query
+        self._plugin = plugin
+
+    def before_change_query(self):
+        pass
+
+    async def callback(self):
+        self.before_change_query()
+
+        asyncio.create_task(
+            self._plugin.api.change_query(
+                new_query=self._new_query,
+                requery=True
+            )
+        )    
+        return ExecuteResponse(False)
 
 @plugin.search()
 async def query(query:Query):
+    if query.text.startswith("add-"):
+        return await get_add_results(query=query)
+    else:
+        return get_all_desktops_results(query=query)
 
-    results:list[DesktopResult] = []
+
+def get_all_desktops_results(query:Query):
+    results:list[Result] = []
 
     virtual_desktops = get_virtual_desktops()
 
     current_vd = VirtualDesktop(current=True)
+
     filter = query.text.strip().lower()
     
     for vd in virtual_desktops:
@@ -76,8 +119,31 @@ async def query(query:Query):
             score=score
         ))
 
+    results.append(ChangeQueryResult(
+        new_query=f"{query.keyword} add-{query.text}",
+        plugin=plugin,
+        title="Add",
+        glyph=Glyph(text="＋",font_family="sans-serif"),
+        score=-10000,
+    ))
+
     return results
-    
+
+async def get_add_results(query:Query):
+
+    name = query.text.removeprefix("add-")
+
+    class CreateDesktopResult(ChangeQueryResult):
+        def before_change_query(self):
+            VirtualDesktop.create().rename(name=name)
+
+    return CreateDesktopResult(
+        title=f"Add:{name}",
+        plugin=plugin,
+        new_query=f"{query.keyword} ",
+        glyph=Glyph(text="＋",font_family="sans-serif"),
+    )
+
 def get_desktop_name(vd:VirtualDesktop):
     name = ""
     try:
