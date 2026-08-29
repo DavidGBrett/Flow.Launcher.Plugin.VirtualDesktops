@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 
-import functools
 import sys,os
 parent_folder_path = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(parent_folder_path)
 sys.path.append(os.path.join(parent_folder_path, 'lib'))
 sys.path.append(os.path.join(parent_folder_path, 'plugin'))
 
-from flogin import ExecuteResponse, Plugin, Query, Result
+from pyflowlauncher import Plugin, Result, api
 
 from pyvda import VirtualDesktop, get_virtual_desktops
 
@@ -15,33 +14,33 @@ plugin = Plugin()
 
 previous_desktop_id = None
 
-class DesktopResult(Result):
-    def __init__(self, desktop:VirtualDesktop, title: str, subtitle:str, score:int|None) -> None:
-        super().__init__(title, sub=subtitle, icon="assets/main_icon.png",score=score)
 
-        self.desktop = desktop
+@plugin.on_method
+def switch_desktop(desktop_id: str):
+    global previous_desktop_id
 
-    async def callback(self):
-        # update previous desktop id
-        global previous_desktop_id
-        previous_desktop_id = VirtualDesktop.current().id
-        
-        # switch to given virtual desktop
-        self.desktop.go()
+    desktop = next(
+        (vd for vd in get_virtual_desktops() if str(vd.id) == desktop_id),
+        None
+    )
+    if desktop is None:
+        return
 
-        await plugin.api.change_query(plugin.metadata.main_keyword+" ",requery=True)
+    previous_desktop_id = VirtualDesktop.current().id
+    desktop.go()
 
-        return ExecuteResponse(True)
+    return api.change_query(plugin.manifest.action_keyword + " ", requery=True)
 
-@plugin.search()
-async def query(query:Query):
 
-    results:list[DesktopResult] = []
+@plugin.on_method
+def query(query:str):
+
+    results:list[Result] = []
 
     virtual_desktops = get_virtual_desktops()
 
     current_vd = VirtualDesktop(current=True)
-    filter = query.text.strip().lower()
+    filter = query.strip().lower()
     
     for vd in virtual_desktops:
         name = get_desktop_name(vd)
@@ -69,12 +68,17 @@ async def query(query:Query):
         )):
             score += 500
 
-        results.append(DesktopResult(
-            desktop=vd,
-            title=name,
-            subtitle=subtitle,
-            score=score
-        ))
+        results.append(
+            Result(
+                title=name,
+                subtitle=subtitle,
+                icon="assets/main_icon.png",
+                score=score
+            ).add_action(
+                switch_desktop, 
+                [str(vd.id)]
+            )
+        )
 
     return results
     
